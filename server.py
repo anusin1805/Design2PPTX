@@ -3,7 +3,6 @@ from pptx import Presentation
 from pptx.util import Inches, Pt # Import positioning utilities
 from io import BytesIO
 import requests # --- NEW: Import requests library for fetching URLs ---
-pip install Flask python-pptx requests
 
 app = Flask(__name__)
 
