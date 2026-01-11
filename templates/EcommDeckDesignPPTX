@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPT Design Uploader</title>
+</head>
+<body>
+    <h1>Upload your blank PowerPoint to add design traces</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="pptFile" accept=".pptx" required>
+        <button type="submit">Add Design & Download</button>
+    </form>
+    <div id="status"></div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = 'Uploading and processing... Please wait.';
+
+            const formData = new FormData(this); // 'this' refers to the form element
+
+            try {
+                const response = await fetch('/upload-and-design', { // This is your server endpoint
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    // Assuming the server sends back the file directly
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'designed_presentation.pptx'; // Suggested download filename
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+                    statusDiv.textContent = 'Design added! Your file is downloading.';
+                } else {
+                    const errorText = await response.text();
+                    statusDiv.textContent = `Error: ${response.status} - ${errorText}`;
+                }
+            } catch (error) {
+                statusDiv.textContent = `Network error: ${error.message}`;
+                console.error('Fetch error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
+
