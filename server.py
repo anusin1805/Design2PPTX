@@ -3,6 +3,7 @@ from pptx import Presentation
 from pptx.util import Inches, Pt # Import positioning utilities
 from io import BytesIO
 import requests # --- NEW: Import requests library for fetching URLs ---
+from pptx.dml.color import RGBColor
 
 app = Flask(__name__)
 
@@ -66,7 +67,7 @@ def upload_and_design():
                 p = textbox.text_frame.add_paragraph()
                 p.text = f"Design Trace added to Slide {slide_idx + 1}"
                 p.font.size = Pt(18)
-                p.font.color.rgb = (0x55, 0x55, 0x55) # Dark gray
+                p.font.color.rgb = (255, 0, 0) # Dark gray
 
                 # --- NEW: IMAGE ADDITION LOGIC ---
                 if image_memory_stream:
