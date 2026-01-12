@@ -2,64 +2,98 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PPT Design Uploader</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design2PPTX - Select Design</title>
     <style>
-        .product { border: 1px solid #ddd; padding: 10px; margin: 10px; display: inline-block; width: 200px; text-align: center; }
-        .product img { max-width: 100%; height: auto; }
-        .selected { border: 3px solid #28a745; background-color: #e8f5e9; } /* Visual highlight */
+        body { font-family: sans-serif; padding: 20px; }
+        .product-container { display: flex; flex-wrap: wrap; gap: 20px; }
+        .product { 
+            border: 1px solid #ddd; 
+            padding: 15px; 
+            width: 200px; 
+            text-align: center; 
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .product:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .product img { max-width: 100%; height: auto; border-radius: 4px; }
+        .selected { border: 3px solid #4CAF50; background-color: #f0fff0; }
+        
+        #upload-section { margin-top: 30px; padding: 20px; border-top: 2px solid #eee; }
+        button { background-color: #008CBA; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px;}
+        button:hover { background-color: #007bb5; }
+        .select-btn { background-color: #4CAF50; margin-top: 10px; }
     </style>
 </head>
 <body>
-    <h1>1. Select a Design</h1>
-    <div id="product-list">
-        <div class="product">
-            <img src="https://github.com/anusin1805/Design2PPTX/blob/main/cash%20pile.png?raw=true" alt="Cash Pile">
+
+    <h1>1. Choose a Design Template</h1>
+    <div class="product-container">
+        
+        <div class="product" id="prod1">
+            <img src="https://github.com/anusin1805/Design2PPTX/raw/main/cash%20pile.png" alt="Cash Pile">
             <h3>Cash Pile</h3>
-            <button type="button" onclick="selectDesign('https://github.com/anusin1805/Design2PPTX/blob/main/cash%20pile.png')">Select This Design</button>
+            <p>Rs 199</p>
+            <button class="select-btn" type="button" onclick="selectDesign('https://github.com/anusin1805/Design2PPTX/blob/main/cash%20pile.png', 'prod1')">Select Design</button>
         </div>
 
-        <div class="product">
-            <img src="https://github.com/anusin1805/Design2PPTX/blob/main/women%20network%20social%20circle.png?raw=true" alt="Social Circle">
-            <h3>Social Circle</h3>
-            <button type="button" onclick="selectDesign('https://github.com/anusin1805/Design2PPTX/blob/main/women%20network%20social%20circle.png')">Select This Design</button>
+        <div class="product" id="prod2">
+            <img src="https://github.com/anusin1805/Design2PPTX/raw/main/women%20network%20social%20circle.png" alt="Social Network">
+            <h3>Social Network</h3>
+            <p>Rs 599</p>
+            <button class="select-btn" type="button" onclick="selectDesign('https://github.com/anusin1805/Design2PPTX/blob/main/women%20network%20social%20circle.png', 'prod2')">Select Design</button>
         </div>
+
+        <div class="product" id="prod3">
+            <img src="https://github.com/anusin1805/Design2PPTX/raw/main/clock%20calculator%20compound.png" alt="Clock">
+            <h3>Clock Compound</h3>
+            <p>Rs 80</p>
+            <button class="select-btn" type="button" onclick="selectDesign('https://github.com/anusin1805/Design2PPTX/blob/main/clock%20calculator%20compound.png', 'prod3')">Select Design</button>
+        </div>
+
     </div>
 
-    <h1>2. Upload your Presentation</h1>
-    <form id="uploadForm" enctype="multipart/form-data">
-        <input type="file" name="pptFile" accept=".pptx" required>
+    <div id="upload-section">
+        <h1>2. Upload your Presentation</h1>
+        <p id="selection-status" style="color: red;">Please select a design above first.</p>
         
-        <input type="hidden" name="design_url" id="design_url_input" value="">
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" name="pptFile" accept=".pptx" required>
+            
+            <input type="hidden" name="design_url" id="hidden_design_url">
 
-        <button type="submit">Add Design & Download</button>
-    </form>
-    <div id="status"></div>
+            <button type="submit" id="submitBtn" disabled>Apply Design & Download</button>
+        </form>
+        <div id="status" style="margin-top: 10px; font-weight: bold;"></div>
+    </div>
 
     <script>
-        // Function to update the hidden input when a user clicks a button
-        function selectDesign(url) {
-            document.getElementById('design_url_input').value = url;
-            alert("Design selected! Now upload your PPT.");
+        function selectDesign(url, elementId) {
+            // 1. Update the hidden input field
+            document.getElementById('hidden_design_url').value = url;
+
+            // 2. Visual feedback (highlight selected)
+            document.querySelectorAll('.product').forEach(el => el.classList.remove('selected'));
+            document.getElementById(elementId).classList.add('selected');
+
+            // 3. Enable the upload button
+            document.getElementById('selection-status').textContent = "Design Selected! Now upload your file.";
+            document.getElementById('selection-status').style.color = "green";
+            document.getElementById('submitBtn').disabled = false;
         }
 
         document.getElementById('uploadForm').addEventListener('submit', async function(event) {
             event.preventDefault();
             const statusDiv = document.getElementById('status');
+            statusDiv.textContent = 'Processing... This may take a few seconds.';
             
-            // Validation: Ensure a design is selected
-            const designUrl = document.getElementById('design_url_input').value;
-            if (!designUrl) {
-                statusDiv.textContent = "Error: Please select a design from the list above first.";
-                return;
-            }
-
-            statusDiv.textContent = 'Uploading and processing... Please wait.';
             const formData = new FormData(this);
 
             try {
                 const response = await fetch('/upload-and-design', { 
-                    method: 'POST',
-                    body: formData
+                    method: 'POST', 
+                    body: formData 
                 });
 
                 if (response.ok) {
@@ -67,18 +101,17 @@
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = 'designed_presentation.pptx';
+                    a.download = 'designed_deck.pptx';
                     document.body.appendChild(a);
                     a.click();
                     a.remove();
-                    window.URL.revokeObjectURL(url);
-                    statusDiv.textContent = 'Design added! Your file is downloading.';
+                    statusDiv.textContent = 'Success! Downloading file...';
                 } else {
-                    const errorText = await response.text();
-                    statusDiv.textContent = `Error: ${response.status} - ${errorText}`;
+                    const txt = await response.text();
+                    statusDiv.textContent = 'Error: ' + txt;
                 }
-            } catch (error) {
-                statusDiv.textContent = `Network error: ${error.message}`;
+            } catch (e) {
+                statusDiv.textContent = 'Network Error: ' + e.message;
             }
         });
     </script>
