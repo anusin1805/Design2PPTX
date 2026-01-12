@@ -2,38 +2,72 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PPT Design Uploader</title>
+    <style>
+        .product { border: 1px solid #ddd; padding: 10px; margin: 10px; display: inline-block; width: 200px; text-align: center; }
+        .product img { max-width: 100%; height: auto; }
+        .selected { border: 3px solid #28a745; background-color: #e8f5e9; } /* Visual highlight */
+    </style>
 </head>
 <body>
-    <h1>Upload your blank PowerPoint to add design traces</h1>
+    <h1>1. Select a Design</h1>
+    <div id="product-list">
+        <div class="product">
+            <img src="https://github.com/anusin1805/Design2PPTX/blob/main/cash%20pile.png?raw=true" alt="Cash Pile">
+            <h3>Cash Pile</h3>
+            <button type="button" onclick="selectDesign('https://github.com/anusin1805/Design2PPTX/blob/main/cash%20pile.png')">Select This Design</button>
+        </div>
+
+        <div class="product">
+            <img src="https://github.com/anusin1805/Design2PPTX/blob/main/women%20network%20social%20circle.png?raw=true" alt="Social Circle">
+            <h3>Social Circle</h3>
+            <button type="button" onclick="selectDesign('https://github.com/anusin1805/Design2PPTX/blob/main/women%20network%20social%20circle.png')">Select This Design</button>
+        </div>
+    </div>
+
+    <h1>2. Upload your Presentation</h1>
     <form id="uploadForm" enctype="multipart/form-data">
         <input type="file" name="pptFile" accept=".pptx" required>
+        
+        <input type="hidden" name="design_url" id="design_url_input" value="">
+
         <button type="submit">Add Design & Download</button>
     </form>
     <div id="status"></div>
 
     <script>
+        // Function to update the hidden input when a user clicks a button
+        function selectDesign(url) {
+            document.getElementById('design_url_input').value = url;
+            alert("Design selected! Now upload your PPT.");
+        }
+
         document.getElementById('uploadForm').addEventListener('submit', async function(event) {
             event.preventDefault();
             const statusDiv = document.getElementById('status');
-            statusDiv.textContent = 'Uploading and processing... Please wait.';
+            
+            // Validation: Ensure a design is selected
+            const designUrl = document.getElementById('design_url_input').value;
+            if (!designUrl) {
+                statusDiv.textContent = "Error: Please select a design from the list above first.";
+                return;
+            }
 
-            const formData = new FormData(this); // 'this' refers to the form element
+            statusDiv.textContent = 'Uploading and processing... Please wait.';
+            const formData = new FormData(this);
 
             try {
-                const response = await fetch('/upload-and-design', { // This is your server endpoint
+                const response = await fetch('/upload-and-design', { 
                     method: 'POST',
                     body: formData
                 });
 
                 if (response.ok) {
-                    // Assuming the server sends back the file directly
                     const blob = await response.blob();
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = 'designed_presentation.pptx'; // Suggested download filename
+                    a.download = 'designed_presentation.pptx';
                     document.body.appendChild(a);
                     a.click();
                     a.remove();
@@ -45,10 +79,8 @@
                 }
             } catch (error) {
                 statusDiv.textContent = `Network error: ${error.message}`;
-                console.error('Fetch error:', error);
             }
         });
     </script>
 </body>
 </html>
-
