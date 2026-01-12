@@ -67,7 +67,7 @@ def upload_and_design():
                 p = textbox.text_frame.add_paragraph()
                 p.text = f"Design Trace added to Slide {slide_idx + 1}"
                 p.font.size = Pt(18)
-                p.font.color.rgb = rgb(255, 105, 180) # Use RGBColor() for Pink
+                p.font.color.rgb = RGBColor(255, 105, 180) # Use RGBColor() for Pink
 
                 # --- NEW: IMAGE ADDITION LOGIC ---
                 if image_memory_stream:
