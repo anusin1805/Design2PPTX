@@ -24,6 +24,10 @@
         button { background-color: #008CBA; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px;}
         button:hover { background-color: #007bb5; }
         .select-btn { background-color: #4CAF50; margin-top: 10px; }
+        
+        /* New Styles for Color Picker */
+        .color-picker-container { margin: 20px 0; }
+        input[type="color"] { width: 50px; height: 50px; border: none; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -34,35 +38,33 @@
         <div class="product" id="prod1">
             <img src="https://github.com/anusin1805/Design2PPTX/raw/main/cash%20pile.png" alt="Cash Pile">
             <h3>Cash Pile</h3>
-            <p>Rs 199</p>
             <button class="select-btn" type="button" onclick="selectDesign('https://github.com/anusin1805/Design2PPTX/blob/main/cash%20pile.png', 'prod1')">Select Design</button>
         </div>
 
         <div class="product" id="prod2">
             <img src="https://github.com/anusin1805/Design2PPTX/raw/main/women%20network%20social%20circle.png" alt="Social Network">
             <h3>Social Network</h3>
-            <p>Rs 599</p>
             <button class="select-btn" type="button" onclick="selectDesign('https://github.com/anusin1805/Design2PPTX/blob/main/women%20network%20social%20circle.png', 'prod2')">Select Design</button>
         </div>
-
-        <div class="product" id="prod3">
-            <img src="https://github.com/anusin1805/Design2PPTX/raw/main/clock%20calculator%20compound.png" alt="Clock">
-            <h3>Clock Compound</h3>
-            <p>Rs 80</p>
-            <button class="select-btn" type="button" onclick="selectDesign('https://github.com/anusin1805/Design2PPTX/blob/main/clock%20calculator%20compound.png', 'prod3')">Select Design</button>
-        </div>
-
     </div>
 
     <div id="upload-section">
-        <h1>2. Upload your Presentation</h1>
+        <h1>2. Customize & Upload</h1>
         <p id="selection-status" style="color: red;">Please select a design above first.</p>
         
         <form id="uploadForm" enctype="multipart/form-data">
+            
+            <div class="color-picker-container">
+                <label for="bg_color"><strong>Select Background Color:</strong></label><br>
+                <input type="color" id="bg_color" name="bg_color" value="#ffffff">
+            </div>
+
+            <label><strong>Upload File:</strong></label><br>
             <input type="file" name="pptFile" accept=".pptx" required>
             
             <input type="hidden" name="design_url" id="hidden_design_url">
 
+            <br><br>
             <button type="submit" id="submitBtn" disabled>Apply Design & Download</button>
         </form>
         <div id="status" style="margin-top: 10px; font-weight: bold;"></div>
@@ -70,15 +72,10 @@
 
     <script>
         function selectDesign(url, elementId) {
-            // 1. Update the hidden input field
             document.getElementById('hidden_design_url').value = url;
-
-            // 2. Visual feedback (highlight selected)
             document.querySelectorAll('.product').forEach(el => el.classList.remove('selected'));
             document.getElementById(elementId).classList.add('selected');
-
-            // 3. Enable the upload button
-            document.getElementById('selection-status').textContent = "Design Selected! Now upload your file.";
+            document.getElementById('selection-status').textContent = "Design Selected! Now choose a color and upload your file.";
             document.getElementById('selection-status').style.color = "green";
             document.getElementById('submitBtn').disabled = false;
         }
